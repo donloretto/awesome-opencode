@@ -73,7 +73,7 @@
 |[Vibe Kanban](https://github.com/BloopAI/vibe-kanban)|![GitHub Repo stars](https://badgen.net/github/stars/BloopAI/vibe-kanban)|A Kanban board to manage and orchestrate AI coding agents in parallel.[[1](https://www.google.com/url?sa=E&q=https%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQHIHL7uayaJJgxDiGXeuGn5lO7Mu37isBe1A6HfFTG9RSQU7M4TCSC2uasqpncR57EkYh4E6Nwch-BbwcvOa1mv4cBwdzCvBqb3C4e4QWjTFaDm5680PwqIeOX4JOHllfU%3D)]|
 |[opencode-skills](https://github.com/malhashemi/opencode-skills)|![GitHub Repo stars](https://badgen.net/github/stars/malhashemi/opencode-skills)|Skills management system for organizing and tracking opencode capabilities.|
 |[opencode-sessions](https://github.com/malhashemi/opencode-sessions)|![GitHub Repo stars](https://badgen.net/github/stars/malhashemi/opencode-sessions)|Session management tool for opencode to track and organize coding sessions.|
-|[Handy](https://github.com/cjpais/Handy)|![GitHub Repo stars](https://badgen.net/github/stars/cjpais/Handy)|Easy text input via speech in opencode TUI - voice-to-text integration.|
+|[Handy](https://github.com/cjpais/Handy)|![GitHub Repo stars](https://badgen.net/github/stars/cjpais/Handy)|Easy Open Source Speech to Text|
 |[opencode-web](https://github.com/kcrommett/opencode-web)|![GitHub Repo stars](https://badgen.net/github/stars/kcrommett/opencode-web)|Web interface for opencode - browser-based access to AI coding agent.|
 |[openspec](https://github.com/Fission-AI/OpenSpec)|![GitHub Repo stars](https://badgen.net/github/stars/Fission-AI/OpenSpec)|Spec-driven development with opencode - structured specification management.|
 

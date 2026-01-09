@@ -93,6 +93,7 @@
 |[oc-manager](https://github.com/kcrommett/oc-manager)|![GitHub Repo stars](https://badgen.net/github/stars/kcrommett/oc-manager)|Terminal UI for inspecting, filtering, and pruning OpenCode metadata stored on disk. The app is written in TypeScript, runs on Bun, and renders with @opentui/react.|
 |[beads](https://github.com/steveyegge/beads)|![GitHub Repo stars](https://badgen.net/github/stars/steveyegge/beads)|Steve Yegge's project/task management system for agents (with beads_viewer UI)|
 |[opencode-ddev](https://github.com/JUVOJustin/opencode-ddev)|![GitHub Repo stars](https://badgen.net/github/stars/JUVOJustin/opencode-ddev)|Wraps bash commands to execute inside the DDEV container (Docker-based PHP development environments).|
+|[tokscale](https://github.com/junhoyeo/tokscale)|![GitHub Repo stars](https://badgen.net/github/stars/junhoyeo/tokscale)|A CLI tool for tracking token usage from OpenCode and other coding agents (Claude Code, Codex, Gemini CLI, and Cursor IDE).|
 ➡️ **[Suggest a new Project in our Discussions!](https://github.com/awesome-opencode/awesome-opencode/discussions/categories/projects)**
 
 ## Resources

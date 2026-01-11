@@ -251,6 +251,15 @@
 </details>
 
 <details>
+  <summary><b>opencode-mystatus</b> <img src="https://badgen.net/github/stars/vbgate/opencode-mystatus" height="14"/> - <i>Check AI subscription quotas</i></summary>
+  <blockquote>
+    Check all your AI subscription quotas in one command. Supports OpenAI (Plus/Pro/Codex, etc.), Zhipu AI, Google Antigravity, and more.
+    <br><br>
+    <a href="https://github.com/vbgate/opencode-mystatus">🔗 <b>View Repository</b></a>
+  </blockquote>
+</details>
+
+<details>
   <summary><b>OpenHax Codex</b> <img src="https://badgen.net/github/stars/open-hax/codex" height="14"/> - <i>OAuth authentication</i></summary>
   <blockquote>
     OAuth authentication plugin for personal coding assistance with ChatGPT Plus/Pro subscriptions.

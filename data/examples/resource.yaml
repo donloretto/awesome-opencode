@@ -9,11 +9,10 @@
 name: Example MCP Server
 repo: https://github.com/example/opencode-mcp-database
 tagline: MCP server for database access and querying
-description: |
-  A Model Context Protocol (MCP) server that provides
+description: A Model Context Protocol (MCP) server that provides
   OpenCode with database access capabilities.
   
-  Supports:
+  Supports
   - PostgreSQL, MySQL, SQLite
   - Read-only query execution
   - Schema introspection

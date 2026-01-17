@@ -1,0 +1,89 @@
+{
+  "modules": {
+    "search": {
+      "enabled": true,
+      "description": "Hidden city tickets, nearby airports, and multi-leg routing",
+      "include_hidden_city": true,
+      "include_nearby_airports": true,
+      "include_multi_leg": true,
+      "max_alternatives": 10
+    },
+    "geo_pricing": {
+      "enabled": true,
+      "description": "Geo-pricing simulation across different countries",
+      "default_countries": ["DE", "PL", "TR", "IN", "GB", "US", "ES", "IT"],
+      "show_vpn_recommendations": true
+    },
+    "inflation": {
+      "enabled": true,
+      "description": "Anti-price-inflation techniques and analysis",
+      "max_searches_per_day": 2,
+      "min_hours_between_searches": 24,
+      "require_incognito_mode": true,
+      "recommend_vpn": true
+    },
+    "historical": {
+      "enabled": true,
+      "description": "Historical pricing behavior and optimal booking windows",
+      "analyze_booking_window": true,
+      "analyze_day_of_week": true,
+      "analyze_seasonal": true,
+      "show_fare_resets": true
+    },
+    "fare_tracking": {
+      "enabled": true,
+      "description": "Price monitoring strategies without triggering inflation",
+      "max_manual_searches": 12,
+      "prefer_alerts": true,
+      "recommended_alert_services": ["Google Flights", "Kayak", "Hopper"]
+    },
+    "platform_compare": {
+      "enabled": true,
+      "description": "Platform comparison for best prices",
+      "platforms_to_check": [
+        "google_flights",
+        "lufthansa_direct",
+        "kayak",
+        "skyscanner",
+        "momondo",
+        "expedia",
+        "kiwi_com"
+      ],
+      "show_fees": true,
+      "show_hidden_costs": true
+    }
+  },
+  "general_settings": {
+    "default_currency": "EUR",
+    "log_level": "INFO",
+    "log_file": "flight_analyzer.log",
+    "output_format": "json",
+    "enable_cache": true,
+    "cache_ttl_seconds": 3600
+  },
+  "search_settings": {
+    "default_flexibility_days": 3,
+    "max_layovers": 2,
+    "min_layover_minutes": 45,
+    "max_layover_minutes": 360,
+    "include_budget_airlines": true
+  },
+  "privacy_settings": {
+    "use_incognito_reminders": true,
+    "clear_cookies_reminder": true,
+    "vpn_recommendations": true,
+    "anti_tracking_tips": true
+  },
+  "notification_settings": {
+    "enable_price_alerts": true,
+    "price_drop_threshold_percent": 10,
+    "alert_email": "",
+    "alert_frequency": "daily"
+  },
+  "advanced_settings": {
+    "enable_experimental_features": false,
+    "debug_mode": false,
+    "api_timeout_seconds": 30,
+    "max_concurrent_requests": 5
+  }
+}

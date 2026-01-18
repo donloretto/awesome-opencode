@@ -17,18 +17,18 @@ import json
 import argparse
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 
 # Add modules to path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from modules.utils import FlightLogger, DateHelper, AirportHelper
-from modules.search import FlightSearchEngine, rank_legal_options
-from modules.geo_pricing import GeoPricingAnalyzer, compare_markets_for_route
-from modules.inflation import PriceInflationAnalyzer, create_search_plan
+from modules.search import FlightSearchEngine
+from modules.geo_pricing import GeoPricingAnalyzer
+from modules.inflation import PriceInflationAnalyzer
 from modules.historical import HistoricalPricingAnalyzer
-from modules.fare_tracking import FareTrackingStrategy, monitor_price_stability
-from modules.platform_compare import PlatformComparator, quick_platform_comparison
+from modules.fare_tracking import FareTrackingStrategy
+from modules.platform_compare import PlatformComparator
 
 
 class FlightPriceAnalyzer:
@@ -102,12 +102,10 @@ class FlightPriceAnalyzer:
         # Strategy 1: Advanced Search (Hidden City, Nearby Airports, Multi-leg)
         if self.config.get('modules', {}).get('search', {}).get('enabled', True):
             self.logger.info("📍 [1/7] Analyzing Hidden City Tickets & Alternative Routing...")
-            results['advanced_search'] = self.search_engine.comprehensive_search(
+            search_results = self.search_engine.comprehensive_search(
                 origin, destination, dep_date, ret_date
             )
-            results['ranked_options'] = rank_legal_options([
-                self.search_engine.search_direct_flight(origin, destination, dep_date, ret_date)
-            ])
+            results['advanced_search'] = search_results
 
         # Strategy 2: Anti-Price-Inflation
         if self.config.get('modules', {}).get('inflation', {}).get('enabled', True):

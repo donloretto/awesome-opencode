@@ -10,6 +10,8 @@ from typing import Dict, List, Optional, Any
 import hashlib
 import random
 import time
+from pathlib import Path
+from urllib.parse import urlencode
 
 
 class FlightLogger:
@@ -99,33 +101,10 @@ class CurrencyConverter:
 
 
 class AirportHelper:
-    """Airport and route utilities."""
+    """Airport and route utilities with comprehensive worldwide airport database."""
 
-    # Sample airport data (in production, use comprehensive database)
-    AIRPORTS = {
-        'FRA': {'city': 'Frankfurt', 'country': 'DE', 'name': 'Frankfurt Airport'},
-        'MUC': {'city': 'Munich', 'country': 'DE', 'name': 'Munich Airport'},
-        'BER': {'city': 'Berlin', 'country': 'DE', 'name': 'Berlin Brandenburg'},
-        'HAM': {'city': 'Hamburg', 'country': 'DE', 'name': 'Hamburg Airport'},
-        'DUS': {'city': 'Düsseldorf', 'country': 'DE', 'name': 'Düsseldorf Airport'},
-        'CGN': {'city': 'Cologne', 'country': 'DE', 'name': 'Cologne Bonn Airport'},
-        'STR': {'city': 'Stuttgart', 'country': 'DE', 'name': 'Stuttgart Airport'},
-        'JFK': {'city': 'New York', 'country': 'US', 'name': 'John F. Kennedy Intl'},
-        'LHR': {'city': 'London', 'country': 'GB', 'name': 'London Heathrow'},
-        'CDG': {'city': 'Paris', 'country': 'FR', 'name': 'Charles de Gaulle'},
-        'AMS': {'city': 'Amsterdam', 'country': 'NL', 'name': 'Schiphol'},
-        'MAD': {'city': 'Madrid', 'country': 'ES', 'name': 'Madrid-Barajas'},
-        'BCN': {'city': 'Barcelona', 'country': 'ES', 'name': 'Barcelona-El Prat'},
-        'FCO': {'city': 'Rome', 'country': 'IT', 'name': 'Fiumicino'},
-        'VIE': {'city': 'Vienna', 'country': 'AT', 'name': 'Vienna Intl'},
-        'ZRH': {'city': 'Zurich', 'country': 'CH', 'name': 'Zurich Airport'},
-        'DXB': {'city': 'Dubai', 'country': 'AE', 'name': 'Dubai Intl'},
-        'BKK': {'city': 'Bangkok', 'country': 'TH', 'name': 'Suvarnabhumi'},
-        'SIN': {'city': 'Singapore', 'country': 'SG', 'name': 'Changi Airport'},
-        'HKG': {'city': 'Hong Kong', 'country': 'HK', 'name': 'Hong Kong Intl'},
-        'NRT': {'city': 'Tokyo', 'country': 'JP', 'name': 'Narita Intl'},
-        'SYD': {'city': 'Sydney', 'country': 'AU', 'name': 'Sydney Airport'},
-    }
+    AIRPORTS = None  # Will be loaded from JSON
+    _airports_loaded = False
 
     # Nearby airports mapping
     NEARBY_AIRPORTS = {
@@ -136,17 +115,83 @@ class AirportHelper:
         'LHR': ['LGW', 'STN', 'LTN'],
         'CDG': ['ORY'],
         'DXB': ['AUH'],
+        'IST': ['SAW'],
+        'NYC': ['JFK', 'LGA', 'EWR'],
+        'LON': ['LHR', 'LGW', 'STN', 'LTN', 'LCY'],
+        'PAR': ['CDG', 'ORY'],
+        'MIL': ['MXP', 'LIN'],
+        'ROM': ['FCO', 'CIA'],
+        'BER': ['BER', 'SXF', 'TXL'],
+        'SHA': ['PVG', 'SHA'],
+        'TOK': ['NRT', 'HND'],
+        'BUE': ['EZE', 'AEP'],
     }
+
+    @classmethod
+    def _load_airports(cls):
+        """Load airport database from JSON file."""
+        if cls._airports_loaded:
+            return
+
+        try:
+            # Try to load from data directory
+            data_dir = Path(__file__).parent.parent / 'data'
+            airports_file = data_dir / 'airports.json'
+
+            if airports_file.exists():
+                with open(airports_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    cls.AIRPORTS = data.get('airports', {})
+                    cls._airports_loaded = True
+            else:
+                # Fallback to basic airports
+                cls.AIRPORTS = {
+                    'FRA': {'city': 'Frankfurt', 'country': 'DE', 'name': 'Frankfurt Airport', 'region': 'Europe'},
+                    'JFK': {'city': 'New York', 'country': 'US', 'name': 'John F. Kennedy Intl', 'region': 'North America'},
+                }
+                cls._airports_loaded = True
+        except Exception as e:
+            # Fallback to basic airports
+            cls.AIRPORTS = {
+                'FRA': {'city': 'Frankfurt', 'country': 'DE', 'name': 'Frankfurt Airport', 'region': 'Europe'},
+                'JFK': {'city': 'New York', 'country': 'US', 'name': 'John F. Kennedy Intl', 'region': 'North America'},
+            }
+            cls._airports_loaded = True
 
     @classmethod
     def get_airport_info(cls, code: str) -> Optional[Dict[str, str]]:
         """Get airport information."""
+        cls._load_airports()
         return cls.AIRPORTS.get(code.upper())
 
     @classmethod
     def get_nearby_airports(cls, code: str) -> List[str]:
         """Get list of nearby airports."""
         return cls.NEARBY_AIRPORTS.get(code.upper(), [])
+
+    @classmethod
+    def get_all_airports(cls) -> Dict[str, Dict[str, str]]:
+        """Get all airports in the database."""
+        cls._load_airports()
+        return cls.AIRPORTS
+
+    @classmethod
+    def search_airports(cls, query: str) -> List[Dict[str, Any]]:
+        """Search airports by code, city, or name."""
+        cls._load_airports()
+        query = query.upper()
+        results = []
+
+        for code, info in cls.AIRPORTS.items():
+            if (query in code or
+                query in info.get('city', '').upper() or
+                query in info.get('name', '').upper()):
+                results.append({
+                    'code': code,
+                    **info
+                })
+
+        return results[:10]  # Return top 10 matches
 
     @classmethod
     def format_route(cls, origin: str, destination: str) -> str:
@@ -329,3 +374,147 @@ def validate_date_format(date_str: str) -> bool:
         return True
     except ValueError:
         return False
+
+
+class BookingLinkGenerator:
+    """Generate booking links for various flight search platforms."""
+
+    @staticmethod
+    def format_date_for_url(date_obj: datetime, format_type: str = 'standard') -> str:
+        """Format date for URL based on platform requirements."""
+        if format_type == 'standard':
+            return date_obj.strftime('%Y-%m-%d')
+        elif format_type == 'compact':
+            return date_obj.strftime('%Y%m%d')
+        else:
+            return date_obj.strftime('%Y-%m-%d')
+
+    @classmethod
+    def google_flights(cls, origin: str, destination: str, departure_date: datetime,
+                      return_date: Optional[datetime] = None) -> str:
+        """Generate Google Flights search URL."""
+        base_url = "https://www.google.com/travel/flights"
+
+        # Format: /flights?q=Flights%20from%20FRA%20to%20JFK%20on%202026-03-15
+        if return_date:
+            date_str = f"{cls.format_date_for_url(departure_date)}%20return%20{cls.format_date_for_url(return_date)}"
+        else:
+            date_str = cls.format_date_for_url(departure_date)
+
+        query = f"Flights from {origin} to {destination} on {date_str}"
+        params = {'q': query}
+
+        return f"{base_url}?{urlencode(params)}"
+
+    @classmethod
+    def skyscanner(cls, origin: str, destination: str, departure_date: datetime,
+                   return_date: Optional[datetime] = None) -> str:
+        """Generate Skyscanner search URL."""
+        base_url = "https://www.skyscanner.com/transport/flights"
+
+        dep_date = cls.format_date_for_url(departure_date, 'compact')
+
+        if return_date:
+            ret_date = cls.format_date_for_url(return_date, 'compact')
+            # Format: /FRA/JFK/260315/260322
+            url = f"{base_url}/{origin}/{destination}/{dep_date[2:]}/{ret_date[2:]}"
+        else:
+            # One-way: /FRA/JFK/260315
+            url = f"{base_url}/{origin}/{destination}/{dep_date[2:]}"
+
+        return url
+
+    @classmethod
+    def kayak(cls, origin: str, destination: str, departure_date: datetime,
+             return_date: Optional[datetime] = None, adults: int = 1) -> str:
+        """Generate Kayak search URL."""
+        base_url = "https://www.kayak.com/flights"
+
+        dep_date = cls.format_date_for_url(departure_date)
+
+        if return_date:
+            ret_date = cls.format_date_for_url(return_date)
+            # Format: /FRA-JFK/2026-03-15/2026-03-22/1adults
+            url = f"{base_url}/{origin}-{destination}/{dep_date}/{ret_date}/{adults}adults"
+        else:
+            # One-way: /FRA-JFK/2026-03-15/1adults
+            url = f"{base_url}/{origin}-{destination}/{dep_date}/{adults}adults"
+
+        return url
+
+    @classmethod
+    def momondo(cls, origin: str, destination: str, departure_date: datetime,
+               return_date: Optional[datetime] = None) -> str:
+        """Generate Momondo search URL."""
+        base_url = "https://www.momondo.com/flight-search"
+
+        dep_date = cls.format_date_for_url(departure_date)
+
+        if return_date:
+            ret_date = cls.format_date_for_url(return_date)
+            url = f"{base_url}/{origin}-{destination}/{dep_date}/{ret_date}"
+        else:
+            url = f"{base_url}/{origin}-{destination}/{dep_date}"
+
+        return url
+
+    @classmethod
+    def kiwi(cls, origin: str, destination: str, departure_date: datetime,
+            return_date: Optional[datetime] = None) -> str:
+        """Generate Kiwi.com search URL."""
+        base_url = "https://www.kiwi.com/en/search"
+
+        params = {
+            'sort': 'price',
+            'aTime': '00:00',
+            'dTime': '00:00',
+            'origin': origin,
+            'destination': destination,
+            'departure': cls.format_date_for_url(departure_date, 'compact')
+        }
+
+        if return_date:
+            params['return'] = cls.format_date_for_url(return_date, 'compact')
+
+        return f"{base_url}?{urlencode(params)}"
+
+    @classmethod
+    def expedia(cls, origin: str, destination: str, departure_date: datetime,
+               return_date: Optional[datetime] = None) -> str:
+        """Generate Expedia search URL."""
+        base_url = "https://www.expedia.com/Flights-Search"
+
+        params = {
+            'trip': 'roundtrip' if return_date else 'oneway',
+            'leg1': f'from:{origin},to:{destination},departure:{cls.format_date_for_url(departure_date, "compact")}'
+        }
+
+        if return_date:
+            params['leg2'] = f'from:{destination},to:{origin},departure:{cls.format_date_for_url(return_date, "compact")}'
+
+        return f"{base_url}?{urlencode(params)}"
+
+    @classmethod
+    def generate_all_links(cls, origin: str, destination: str, departure_date: datetime,
+                          return_date: Optional[datetime] = None) -> Dict[str, str]:
+        """Generate booking links for all supported platforms."""
+        return {
+            'google_flights': cls.google_flights(origin, destination, departure_date, return_date),
+            'skyscanner': cls.skyscanner(origin, destination, departure_date, return_date),
+            'kayak': cls.kayak(origin, destination, departure_date, return_date),
+            'momondo': cls.momondo(origin, destination, departure_date, return_date),
+            'kiwi': cls.kiwi(origin, destination, departure_date, return_date),
+            'expedia': cls.expedia(origin, destination, departure_date, return_date)
+        }
+
+    @classmethod
+    def get_platform_display_names(cls) -> Dict[str, str]:
+        """Get user-friendly display names for platforms."""
+        return {
+            'google_flights': 'Google Flights',
+            'skyscanner': 'Skyscanner',
+            'kayak': 'Kayak',
+            'momondo': 'Momondo',
+            'kiwi': 'Kiwi.com',
+            'expedia': 'Expedia'
+        }

@@ -8,7 +8,7 @@ from datetime import datetime
 import itertools
 from .utils import (
     FlightLogger, AirportHelper, DateHelper,
-    format_duration, calculate_price_difference
+    format_duration, calculate_price_difference, BookingLinkGenerator
 )
 
 
@@ -25,7 +25,8 @@ class FlightRoute:
         currency: str = 'EUR',
         legs: Optional[List[Dict]] = None,
         route_type: str = 'direct',
-        booking_link: Optional[str] = None
+        booking_link: Optional[str] = None,
+        booking_links: Optional[Dict[str, str]] = None
     ):
         self.origin = origin
         self.destination = destination
@@ -36,6 +37,16 @@ class FlightRoute:
         self.legs = legs or []
         self.route_type = route_type
         self.booking_link = booking_link
+        self.booking_links = booking_links or self._generate_booking_links()
+
+    def _generate_booking_links(self) -> Dict[str, str]:
+        """Generate booking links for all platforms."""
+        return BookingLinkGenerator.generate_all_links(
+            self.origin,
+            self.destination,
+            self.departure_date,
+            self.return_date
+        )
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert route to dictionary."""
@@ -48,7 +59,8 @@ class FlightRoute:
             'currency': self.currency,
             'legs': self.legs,
             'route_type': self.route_type,
-            'booking_link': self.booking_link,
+            'booking_link': self.booking_link or self.booking_links.get('google_flights'),
+            'booking_links': self.booking_links,
             'route_description': AirportHelper.format_route(self.origin, self.destination)
         }
 
